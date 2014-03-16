@@ -15,7 +15,10 @@
  */
 package kanother.yjtext;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.hamcrest.Matchers.*;
+
 import org.junit.Test;
 
 /**
@@ -31,21 +34,21 @@ public class KeyPhraseTest {
         final KeyPhrase keyPhrase1 = new KeyPhrase("テスト1", 100);
         final KeyPhrase keyPhrase2 = new KeyPhrase("テスト2", 50);
         final KeyPhrase keyPhrase3 = new KeyPhrase("テスト3", 0);
-        Assert.assertNotNull("Instance should not be null", keyPhrase1);
-        Assert.assertEquals("Value should be equal to 'テスト1'",
-                "テスト1", keyPhrase1.getValue());
-        Assert.assertEquals("Score should be equal to 100",
-                100, keyPhrase1.getScore());
-        Assert.assertNotNull("Instance should not be null", keyPhrase2);
-        Assert.assertEquals("Value should be equal to 'テスト2'",
-                "テスト2", keyPhrase2.getValue());
-        Assert.assertEquals("Score should be equal to 50",
-                50, keyPhrase2.getScore());
-        Assert.assertNotNull("Instance should not be null", keyPhrase3);
-        Assert.assertEquals("Value should be equal to 'テスト3'",
-                "テスト3", keyPhrase3.getValue());
-        Assert.assertEquals("Score should be equal to 0",
-                0, keyPhrase3.getScore());
+        assertThat("Instance should not be null", keyPhrase1, notNullValue());
+        assertThat("Value should be equal to 'テスト1'",
+                keyPhrase1.getValue(), is("テスト1"));
+        assertThat("Score should be equal to 100",
+                keyPhrase1.getScore(), is(100));
+        assertThat("Instance should not be null", keyPhrase2, notNullValue());
+        assertThat("Value should be equal to 'テスト2'",
+                keyPhrase2.getValue(), is("テスト2"));
+        assertThat("Score should be equal to 50",
+                keyPhrase2.getScore(), is(50));
+        assertThat("Instance should not be null", keyPhrase3, notNullValue());
+        assertThat("Value should be equal to 'テスト3'",
+                keyPhrase3.getValue(), is("テスト3"));
+        assertThat("Score should be equal to 100",
+                keyPhrase3.getScore(), is(0));
     }
 
     /**
@@ -54,8 +57,8 @@ public class KeyPhraseTest {
     @Test
     public void 文字列形式表現() {
         final KeyPhrase keyPhrase = new KeyPhrase("テスト", 50);
-        Assert.assertEquals("Value should be equal to '[テスト, 50]'",
-                "[テスト, 50]", keyPhrase.toString());
+        assertThat("Value should be equal to '[テスト, 50]'",
+                keyPhrase.toString(), is("[テスト, 50]"));
     }
 
     /**
@@ -64,25 +67,28 @@ public class KeyPhraseTest {
     @Test
     public void 順序比較() {
         final KeyPhrase keyPhrase = new KeyPhrase("test", 50);
-        Assert.assertEquals("Compare result should be equal to 0",
-                0, keyPhrase.compareTo(keyPhrase));
-        Assert.assertEquals("Compare result should be equal to 0",
-                0, keyPhrase.compareTo(new KeyPhrase("test", 50)));
-        Assert.assertTrue("Compare result should be greater than 0",
-                keyPhrase.compareTo(new KeyPhrase("test", 49)) > 0);
-        Assert.assertTrue("Compare result should be lesser than 0",
-                keyPhrase.compareTo(new KeyPhrase("test", 51)) < 0);
-        Assert.assertTrue("Compare result should be greater than 0",
-                keyPhrase.compareTo(new KeyPhrase("tess", 50)) > 0);
-        Assert.assertTrue("Compare result should be lesser than 0",
-                keyPhrase.compareTo(new KeyPhrase("test_", 50)) < 0);
+        assertThat("Compare result should be equal to 0",
+                keyPhrase.compareTo(keyPhrase), is(0));
+        assertThat("Compare result should be equal to 0",
+                keyPhrase.compareTo(new KeyPhrase("test", 50)), is(0));
+        assertThat("Compare result should be greater than 0",
+                keyPhrase.compareTo(new KeyPhrase("test", 49)),
+                greaterThan(0));
+        assertThat("Compare result should be less than 0",
+                keyPhrase.compareTo(new KeyPhrase("test", 51)),
+                lessThan(0));
+        assertThat("Compare result should be greater than 0",
+                keyPhrase.compareTo(new KeyPhrase("tess", 50)),
+                greaterThan(0));
+        assertThat("Compare result should be less than 0",
+                keyPhrase.compareTo(new KeyPhrase("test_", 50)),
+                lessThan(0));
         try {
             keyPhrase.compareTo(null);
-            Assert.fail("Compare should fail");
+            fail("Compare should fail");
         } catch (Exception e) {
-            Assert.assertSame(
-                    "Error class should be equal to NullPointerException",
-                    NullPointerException.class, e.getClass());
+            assertThat("Error class should be equal to NullPointerException",
+                    e.getClass().getSimpleName(), is("NullPointerException"));
         }
     }
 
@@ -92,19 +98,19 @@ public class KeyPhraseTest {
     @Test
     public void 同一性比較() {
         final KeyPhrase keyPhrase = new KeyPhrase("test", 50);
-        Assert.assertTrue("Another object should be equal to keyPhase",
-                keyPhrase.equals(keyPhrase));
-        Assert.assertTrue("Another object should be equal to keyPhase",
-                keyPhrase.equals(new KeyPhrase("test", 50)));
-        Assert.assertFalse("Another object should not be equal to keyPhase",
-                keyPhrase.equals(new KeyPhrase("test", 49)));
-        Assert.assertFalse("Another object should not be equal to keyPhase",
-                keyPhrase.equals(new KeyPhrase("tess", 50)));
-        Assert.assertFalse("Another object should not be equal to keyPhase",
-                keyPhrase.equals(new Object()));
+        assertThat("Another object should be equal to keyPhase",
+                keyPhrase.equals(keyPhrase), is(true));
+        assertThat("Another object should be equal to keyPhase",
+                keyPhrase.equals(new KeyPhrase("test", 50)), is(true));
+        assertThat("Another object should not be equal to keyPhase",
+                keyPhrase.equals(new KeyPhrase("test", 49)), is(false));
+        assertThat("Another object should not be equal to keyPhase",
+                keyPhrase.equals(new KeyPhrase("tess", 50)), is(false));
+        assertThat("Another object should not be equal to keyPhase",
+                keyPhrase.equals(new Object()), is(false));
         //noinspection ObjectEqualsNull
-        Assert.assertFalse("Another object should not be equal to keyPhase",
-                keyPhrase.equals(null));
+        assertThat("Another object should not be equal to keyPhase",
+                keyPhrase.equals(null), is(false));
     }
 
     /**
@@ -113,7 +119,7 @@ public class KeyPhraseTest {
     @Test
     public void ハッシュコード() {
         final KeyPhrase keyPhrase = new KeyPhrase("test", 50);
-        Assert.assertEquals("Hash code should be equal to 131591327",
-                131591327, keyPhrase.hashCode());
+        assertThat("Hash code should be equal to 131591327",
+                keyPhrase.hashCode(), is(131591327));
     }
 }
